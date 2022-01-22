@@ -1,0 +1,5 @@
+services:
+  validator:
+    build: .
+    volumes:
+      - ./scripts/:/usr/src/app/scripts
