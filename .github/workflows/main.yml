@@ -15,8 +15,7 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
-  build:
+  test:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
@@ -25,16 +24,35 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
       
-#       - name: Setup Python
-#         uses: actions/setup-python@v2.3.1
-
-      - name: pytester-cov
-        # You may pin to the exact commit or the version.
-        # uses: alexanderdamiani/pytester-cov@5caff5c16a1c8fa4b91025b7acbdeca438084df7
-        uses: alexanderdamiani/pytester-cov@v1.2.1
+      - name: Setup Python
+        uses: actions/setup-python@v2.3.1
         with:
-          pytest-tests-dir: tests
-     
+          python-version: "3.x"
+          
+      - name: Install pipenv
+        run: |
+          python -m pip install --upgrade pipenv wheel
+          
+      - id: cache-pipenv
+        uses: actions/cache@v1
+        with:
+          path: ~/.local/share/virtualenvs
+          key: ${{ runner.os }}-pipenv-${{ hashFiles('**/Pipfile.lock') }}
+
+      - name: Install dependencies
+        if: steps.cache-pipenv.outputs.cache-hit != 'true'
+        run: |
+          pipenv install --deploy --dev
+          
+      - name: Run test suite
+        run: |
+          pipenv run test -v          
+
+  build_and_push:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      
       - name: Login to Docker Hub
         uses: docker/login-action@v1
         with:
