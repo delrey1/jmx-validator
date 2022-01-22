@@ -10,8 +10,12 @@ LOGGER = logging.getLogger(__name__)
 
 
 def retrieve_jmx_file_names():
-    return glob.glob(os.getenv("JMX_WILDCARD_LOCATION", "scripts/*.jmx"))
+    file_location = os.getenv("JMX_WILDCARD_LOCATION", "scripts/*.jmx")
+    LOGGER.info("Searching for JMX files with =>%s<=" % (file_location))
+    file_names = glob.glob(file_location)
+    LOGGER.info("Found %s files" % len(file_names))
 
+    return file_names
 
 def retrieve_jmx_file_paths():
     out = []
@@ -50,6 +54,7 @@ def test_no_invalid_filenames(file: ElementTree):
             invalid_filenames.append(invalid_filename.text)
     assert invalid_filenames == []
 
+
 @pytest.mark.parametrize("file", retrieve_jmx_files(), ids=retrieve_jmx_file_paths())
 def test_fragment_module_no_exist(file: ElementTree):
     """
@@ -57,7 +62,8 @@ def test_fragment_module_no_exist(file: ElementTree):
         TODO Refactor
     """
     props = set([])
-    module_controller_string_props = file.xpath(".//ModuleController/collectionProp[@name='ModuleController.node_path']/stringProp[not(contains(text(), 'Test Plan'))]")
+    module_controller_string_props = file.xpath(
+        ".//ModuleController/collectionProp[@name='ModuleController.node_path']/stringProp[not(contains(text(), 'Test Plan'))]")
     for string_prop in module_controller_string_props:
         props.add(string_prop.text)
 
@@ -68,8 +74,6 @@ def test_fragment_module_no_exist(file: ElementTree):
 
     for prop in props:
         assert prop in testnames
-
-
 
 
 def test_file_names_greater_than_zero():
