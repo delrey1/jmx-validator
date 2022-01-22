@@ -32,7 +32,7 @@ jobs:
       - name: Run test suite
         run: |
           pip install -r app/requirements.txt
-          pytest tests
+          cd tests && pytest
 
   build_and_push:
     needs: test
