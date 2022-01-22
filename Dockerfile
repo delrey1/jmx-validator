@@ -10,4 +10,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY app .
 
-CMD [ "python", "-m", "pytest", "-v"]
+CMD [ "python", "-m", "pytest", "-v", "--log-cli-level=10"]
