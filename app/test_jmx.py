@@ -57,7 +57,7 @@ def test_fragment_module_no_exist(file: ElementTree):
         TODO Refactor
     """
     props = set([])
-    module_controller_string_props = file.xpath(".//ModuleController/collectionProp[@name='ModuleController.node_path']/stringProp")
+    module_controller_string_props = file.xpath(".//ModuleController/collectionProp[@name='ModuleController.node_path']/stringProp[not(contains(text(), 'Test Plan'))]")
     for string_prop in module_controller_string_props:
         props.add(string_prop.text)
 

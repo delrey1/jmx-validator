@@ -17,6 +17,12 @@ class MyTestCase(unittest.TestCase):
 
         test_fragment_module_no_exist(file)
 
+    def test_sample_test_fragment_module_exists_different_test_plan_name(self):
+
+        file = etree.parse('data/TestPlanWithDifferentName.jmx')
+
+        test_fragment_module_no_exist(file)
+
     def test_test_connect_and_response_timeout_present_if_request_defaults_exist(self):
 
         file = etree.parse('data/SampleFragmentModuleNoExist.jmx')
