@@ -8,13 +8,10 @@ from lxml import etree
 
 LOGGER = logging.getLogger(__name__)
 
+file_location = os.getenv("JMX_WILDCARD_LOCATION", "scripts/*.jmx")
 
 def retrieve_jmx_file_names():
-    file_location = os.getenv("JMX_WILDCARD_LOCATION", "scripts/*.jmx")
-    LOGGER.info("Searching for JMX files with =>%s<=" % (file_location))
     file_names = glob.glob(file_location)
-    LOGGER.info("Found %s files" % len(file_names))
-
     return file_names
 
 def retrieve_jmx_file_paths():
@@ -77,4 +74,14 @@ def test_fragment_module_no_exist(file: ElementTree):
 
 
 def test_file_names_greater_than_zero():
+    LOGGER.info("Searching for JMX files with =>%s<=" % (file_location))
+    file_names = retrieve_jmx_file_names()
+    LOGGER.info("Found %s files" % len(file_names))
+
+    if len(file_names) == 0:
+        LOGGER.warning("Did not find any files. Outputting some additional information to support any investigation")
+        LOGGER.warning("Current dir %s" % (glob.glob("*")))
+        LOGGER.warning("Scripts loc dir %s" % (glob.glob(file_location)))
+
+
     assert len(retrieve_jmx_file_names()) > 0
