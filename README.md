@@ -5,6 +5,39 @@ Super simple JMeter JMX validator to catch basic mistakes before execution in a 
 Integrate this in your pipeline to catch basic mistakes that can prevent a remote execution.
 
 ## How to use
+
+Designed to be run as part of a pipeline, if this is running from a shell executor
+then run the following command
+
+* `cd directory/containing/jmx/files`
+* `docker run -v $(pwd):/usr/src/app/scripts/ delrey/jmx-validator:latest`
+
+Alternatively run from the image and either place jmx files to validate in `/usr/src/app/scripts` or set the
+environment variable `JMX_WILDCARD_LOCATION` appropriate for your volume. Then trigger pytest to run from 
+`/usr/src/app`
+
+**GitLab CI Example**
+
+```
+...
+validate:
+  stage: validate
+  image: delrey/jmx-validator:latest
+  script:
+    # Moving scripts folder to scripts folder within the container
+    - cp -r script/location /usr/src/app
+    # Running pytest command from app dir. This then validates the JMX files
+    - cd /usr/src/app && pytest
+  # Only run this stage when there has been a change to the jmx files
+  only:
+    changes:
+      - "**/*.jmx"
+  allow_failure: true
+  tags:
+    - docker
+...
+```
+
 ## Support
 For any issue or support questions, please create an issue and we'll get back to you.
 
