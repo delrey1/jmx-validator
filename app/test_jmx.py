@@ -5,14 +5,17 @@ from xml.etree import ElementTree
 
 import pytest as pytest
 from lxml import etree
+from lxml.etree import XMLSyntaxError
 
 LOGGER = logging.getLogger(__name__)
 
 file_location = os.getenv("JMX_WILDCARD_LOCATION", "scripts/*.jmx")
 
+
 def retrieve_jmx_file_names():
     file_names = glob.glob(file_location)
     return file_names
+
 
 def retrieve_jmx_file_paths():
     out = []
@@ -21,9 +24,18 @@ def retrieve_jmx_file_paths():
     return out
 
 
+def parse_jmx_file(file_name):
+    try:
+        parsed_file = etree.parse(file_name)
+    except XMLSyntaxError as e:
+        LOGGER.error("File %s could not be read" % file_name)
+        raise e
+    return parsed_file
+
+
 def retrieve_jmx_files():
     for file_name in retrieve_jmx_file_names():
-        yield etree.parse(file_name)
+        yield parse_jmx_file(file_name)
 
 
 @pytest.mark.parametrize("file", retrieve_jmx_files(), ids=retrieve_jmx_file_paths())
@@ -82,6 +94,5 @@ def test_file_names_greater_than_zero():
         LOGGER.warning("Did not find any files. Outputting some additional information to support any investigation")
         LOGGER.warning("Current dir %s" % (glob.glob("*")))
         LOGGER.warning("Scripts loc dir %s" % (glob.glob(file_location)))
-
 
     assert len(retrieve_jmx_file_names()) > 0
