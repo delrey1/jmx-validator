@@ -53,7 +53,7 @@ def test_connect_and_response_timeout_present_if_request_defaults_exist(file: El
 @pytest.mark.parametrize("file", retrieve_jmx_files(), ids=retrieve_jmx_file_paths())
 def test_no_invalid_filenames(file: ElementTree):
     invalid_filename_elements = file.xpath(
-        ".//stringProp[@name='filename' and (contains(text(), ':') or starts-with(text(), '//') or starts-with(text(), '\\\\'))]")
+        ".//stringProp[@name='filename' and (contains(text(), ':') or starts-with(text(), '/') or starts-with(text(), '\\'))]")
     invalid_filenames = []
     if invalid_filename_elements:
         for invalid_filename in invalid_filename_elements:
