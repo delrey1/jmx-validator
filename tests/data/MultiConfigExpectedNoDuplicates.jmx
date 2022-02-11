@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jmeterTestPlan version="1.2" properties="5.0" jmeter="5.4.1">
+  <hashTree>
+    <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="Test Plan" enabled="true">
+      <elementProp name="TestPlan.user_defined_variables" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+        <collectionProp name="Arguments.arguments"/>
+      </elementProp>
+      <boolProp name="TestPlan.functional_mode">false</boolProp>
+      <boolProp name="TestPlan.serialize_threadgroups">false</boolProp>
+      <stringProp name="TestPlan.comments"></stringProp>
+      <stringProp name="TestPlan.user_define_classpath"></stringProp>
+    </TestPlan>
+    <hashTree>
+      <Arguments guiclass="ArgumentsPanel" testclass="Arguments" testname="Single User" enabled="true">
+        <collectionProp name="Arguments.arguments">
+          <elementProp name="RUN_TYPE1" elementType="Argument">
+            <stringProp name="Argument.name">RUN_TYPE1</stringProp>
+            <stringProp name="Argument.value">Single</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="THINK_TIME_MS1" elementType="Argument">
+            <stringProp name="Argument.name">THINK_TIME_MS1</stringProp>
+            <stringProp name="Argument.value">${SINGLE_USER_THINKTIME}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="RAMP_UP_SECS1" elementType="Argument">
+            <stringProp name="Argument.name">RAMP_UP_SECS1</stringProp>
+            <stringProp name="Argument.value">${DEFAULT_RAMP_UP_SECS}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="TOTAL_DURATION_SECS1" elementType="Argument">
+            <stringProp name="Argument.name">TOTAL_DURATION_SECS1</stringProp>
+            <stringProp name="Argument.value">${DEFAULT_TOTAL_DURATION_SECS}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+        </collectionProp>
+      </Arguments>
+      <hashTree/>
+      <Arguments guiclass="ArgumentsPanel" testclass="Arguments" testname="500 User" enabled="true">
+        <collectionProp name="Arguments.arguments">
+          <elementProp name="RUN_TYPE2" elementType="Argument">
+            <stringProp name="Argument.name">RUN_TYPE2</stringProp>
+            <stringProp name="Argument.value">MULTI</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="THINK_TIME_MS2" elementType="Argument">
+            <stringProp name="Argument.name">THINK_TIME_MS2</stringProp>
+            <stringProp name="Argument.value">${SINGLE_USER_THINKTIME}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="RAMP_UP_SECS2" elementType="Argument">
+            <stringProp name="Argument.name">RAMP_UP_SECS2</stringProp>
+            <stringProp name="Argument.value">${DEFAULT_RAMP_UP_SECS}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="TOTAL_DURATION_SECS2" elementType="Argument">
+            <stringProp name="Argument.name">TOTAL_DURATION_SECS2</stringProp>
+            <stringProp name="Argument.value">${DEFAULT_TOTAL_DURATION_SECS}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+        </collectionProp>
+      </Arguments>
+      <hashTree/>
+    </hashTree>
+  </hashTree>
+</jmeterTestPlan>

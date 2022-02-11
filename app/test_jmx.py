@@ -96,3 +96,53 @@ def test_file_names_greater_than_zero():
         LOGGER.warning("Scripts loc dir %s" % (glob.glob(file_location)))
 
     assert len(retrieve_jmx_file_names()) > 0
+
+
+@pytest.mark.parametrize("file", retrieve_jmx_files(), ids=retrieve_jmx_file_paths())
+def test_multiple_configurations_dont_exist(file: ElementTree):
+    """
+        Purpose of this test is to see if there are multiple user defined variables active under the main test plan.
+            The assumption is that there should only be 1.
+        This test considers that there may be multiple user defined variable elements in the tree, but assumes that
+            if there is a duplicate then a mistake has been made.
+        As such, if there are two user defined variable elements active with different values in each, it will not fail
+    :return:
+    """
+
+    arguments = {}
+
+    user_defined_variables = file.xpath(".//hashTree/hashTree/Arguments[@enabled='true']")
+
+    fail = False
+
+    for element in user_defined_variables:
+
+        element_name = element.attrib.get("testname")
+
+        for argument in element.xpath(".//stringProp[@name='Argument.name']/text()"):
+            if argument in arguments:
+                fail = True
+                arguments[argument]['total_count'] += 1
+                if element_name in arguments[argument]:
+                    arguments[argument][element_name] += 1
+                    LOGGER.warning("Saw duplicate of argument =>%s<= in =>%s<=. Total occurrences: %s" % (
+                        argument,
+                        element_name,
+                        arguments[argument]['elements']
+                    ))
+                else:
+                    arguments[argument][element_name] = 1
+                    arguments[argument]['elements'].append(element_name)
+                    LOGGER.warning("Saw duplicate of argument =>%s<= in =>%s<= as well as %s" % (
+                        argument,
+                        element_name,
+                        arguments[argument]['elements']
+                    ))
+            else:
+                arguments[argument] = {
+                    "total_count": 1,
+                    element_name: 1,
+                    "elements": [element_name]
+                }
+
+    assert fail is False, "Saw duplicates when not expected - Check Logs =>%s" % arguments
