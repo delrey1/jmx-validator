@@ -109,6 +109,9 @@ def test_multiple_configurations_dont_exist(file: ElementTree):
     :return:
     """
 
+    # TODO - Add logic to check whether the value is also duplicate,
+    #  if it is we could ignore it as it doesn't affect the test?
+
     arguments = {}
 
     user_defined_variables = file.xpath(".//hashTree/hashTree/Arguments[@enabled='true']")
