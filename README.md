@@ -1,8 +1,18 @@
-# Simple JMeter JMX Validator
+# Super Simple Static JMeter JMX Validator
+
 ## Purpose
+
 Super simple JMeter JMX validator to catch basic mistakes before execution in a pipeline.
 
 Integrate this in your pipeline to catch basic mistakes that can prevent a remote execution.
+
+Currently, this script catches the following:
+
+* Request Response and Connect timeouts are set on the top Request Defaults (If Present)
+* Confirms there are no absolute paths present (e.g. `C:\Users\...\data.csv` or `//a/b/data.csv`)
+* Confirms fragments are correctly linked (Currently a basic check - Room to improve if needed)
+* Duplicate configurations are not present (Designed for JMXs that have load profiles set as `User Defined Variables`
+  elements)
 
 ## How to use
 

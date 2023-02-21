@@ -10,6 +10,7 @@ from lxml.etree import XMLSyntaxError
 LOGGER = logging.getLogger(__name__)
 
 file_location = os.getenv("JMX_WILDCARD_LOCATION", "scripts/*.jmx")
+data_location = os.getenv("JMX_WILDCARD_LOCATION", "data")
 
 
 def retrieve_jmx_file_names():
@@ -71,9 +72,12 @@ def test_fragment_module_no_exist(file: ElementTree):
         TODO Refactor
     """
     props = set([])
+    props_ignore_list = ['workbench']
     module_controller_string_props = file.xpath(
         ".//ModuleController/collectionProp[@name='ModuleController.node_path']/stringProp[not(contains(text(), 'Test Plan'))]")
     for string_prop in module_controller_string_props:
+        if string_prop.text.lower() in props_ignore_list:
+            continue
         props.add(string_prop.text)
 
     testname_elements = file.xpath(".//*[@testname]")
@@ -85,7 +89,7 @@ def test_fragment_module_no_exist(file: ElementTree):
         assert prop in testnames
 
 
-def test_file_names_greater_than_zero():
+def test_number_of_file_names_greater_than_zero():
     LOGGER.info("Searching for JMX files with =>%s<=" % (file_location))
     file_names = retrieve_jmx_file_names()
     LOGGER.info("Found %s files" % len(file_names))
@@ -149,3 +153,4 @@ def test_multiple_configurations_dont_exist(file: ElementTree):
                 }
 
     assert fail is False, "Saw duplicates when not expected - Check Logs =>%s" % arguments
+

@@ -5,6 +5,7 @@ LABEL org.opencontainers.image.source=https://github.com/delrey1/jmx-validator
 WORKDIR /usr/src/app
 
 ENV JMX_WILDCARD_LOCATION=/usr/src/app/scripts/*.jmx
+ENV DATA_LOCATION=/usr/src/app/data/
 
 COPY app/requirements.txt ./
 
