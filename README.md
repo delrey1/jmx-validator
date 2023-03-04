@@ -10,9 +10,11 @@ Currently, this script catches the following:
 
 * Request Response and Connect timeouts are set on the top Request Defaults (If Present)
 * Confirms there are no absolute paths present (e.g. `C:\Users\...\data.csv` or `//a/b/data.csv`)
+* Confirms that paths are unix friendly (i.e. no `\` (standalone backslash))
 * Confirms fragments are correctly linked (Currently a basic check - Room to improve if needed)
 * Duplicate configurations are not present (Designed for JMXs that have load profiles set as `User Defined Variables`
   elements)
+* Test data (If `CHECK_DATA` env property set) has the correct number of columns
 
 ## How to use
 
@@ -35,7 +37,9 @@ validate:
   image: delrey/jmx-validator:latest
   script:
     # Moving scripts folder to scripts folder within the container
-    - cp -r script/location /usr/src/app
+    - cp -r scripts /usr/src/app
+    # Moving test data to folder
+    - cp -r data /usr/src/app
     # Running pytest command from app dir. This then validates the JMX files
     - cd /usr/src/app && pytest
   # Only run this stage when there has been a change to the jmx files
@@ -43,12 +47,15 @@ validate:
     changes:
       - "**/*.jmx"
   allow_failure: true
+  variables:
+    CHECK_DATA: 1 # This enables `test_data_is_valid` test
   tags:
     - docker
 ...
 ```
 
 ## Support
-For any issue or support questions, please create an issue and we'll get back to you.
+
+For any issue or support questions, please create an issue, and we'll get back to you.
 
 If you wish to contribute, please raise a Pull Request.

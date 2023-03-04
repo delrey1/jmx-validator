@@ -64,6 +64,7 @@ def test_no_invalid_filenames(file: ElementTree):
             invalid_filenames.append(invalid_filename.text)
     assert invalid_filenames == []
 
+
 @pytest.mark.parametrize("file", retrieve_jmx_files(), ids=retrieve_jmx_file_paths())
 def test_unix_friendly_file_paths(file: ElementTree):
     potential_invalid_elements = file.xpath(
@@ -81,6 +82,55 @@ def test_unix_friendly_file_paths(file: ElementTree):
             else:
                 LOGGER.info("Saw linux friendly file path =>%s<=" % (potential_invalid_element))
     assert invalid_filenames == [], "There were some linux unfriendly filepaths. Make sure all backslashes are escaped (e.g. \\\\), or just use forward slashes"
+
+
+@pytest.mark.parametrize("file", retrieve_jmx_files(), ids=retrieve_jmx_file_paths())
+def test_data_is_valid(file: ElementTree):
+    if not os.getenv("CHECK_DATA"):
+        LOGGER.warning("Not checking data as we did not have a flag for it enabled")
+        pytest.skip("Not checking data as we did not have a flag for it enabled")
+
+    filenames = file.xpath(
+        r".//stringProp[@name='filename']")
+    invalid_datafiles = []
+    if filenames:
+        for file in filenames:
+
+            file_path = os.path.join(os.getenv("DATA_PARENT_LOCATION"), file.text)
+
+            if os.path.exists(file_path):
+                if file.getparent().tag == "CSVDataSet":
+                    variable_names: str = file.getparent().find("./stringProp[@name='variableNames']").text
+                    delimiter: str = file.getparent().find("./stringProp[@name='delimiter']").text
+                    if variable_names:
+                        jmeter_expected_cols = len(variable_names.split(","))  # JMeter expects "," delimiter
+                        LOGGER.info(
+                            "Saw that there were %s variables in %s. Checking to see if this matches with the actual file" % (
+                                jmeter_expected_cols, file.text
+                            ))
+                        with open(file_path) as f:
+                            r = f.readline()
+                            actual_cols = len(r.split(delimiter))
+                            if actual_cols == jmeter_expected_cols:
+                                LOGGER.info("Number of columns matched for %s. Continuing" % file.text)
+                            else:
+                                err = "File =>%s<= had a delimiter of =>%s<= and %s columns were expected by JMeter, but only %s were found" % (
+                                    file.text, delimiter, jmeter_expected_cols, actual_cols)
+                                LOGGER.warning(err)
+                                invalid_datafiles.append(err)
+                    else:
+                        LOGGER.info("%s did not contain any variable names, skipping checks" % file.text)
+                else:
+                    LOGGER.info(
+                        "File was not part of CSVDataSet, currently do not have any checks in place for this file type"
+                    )
+
+            else:
+                LOGGER.warning("Did not see file =>%s<=. Does it exist?" % file.text)
+                invalid_datafiles.append("Did not see file =>%s<=. Does it exist?" % file.text)
+
+    assert invalid_datafiles == [], "Saw errors around test data - Check to see if they are applicable"
+
 
 @pytest.mark.parametrize("file", retrieve_jmx_files(), ids=retrieve_jmx_file_paths())
 def test_fragment_module_no_exist(file: ElementTree):
@@ -170,4 +220,3 @@ def test_multiple_configurations_dont_exist(file: ElementTree):
                 }
 
     assert fail is False, "Saw duplicates when not expected - Check Logs =>%s" % arguments
-
