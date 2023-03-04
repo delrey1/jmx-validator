@@ -18,8 +18,8 @@ class MyTestCase(unittest.TestCase):
             test_connect_and_response_timeout_present_if_request_defaults_exist(file)
             raise Exception
         # Expecting Assertion Error
-        except AssertionError:
-            pass
+        except AssertionError as e:
+            assert "Did not see a" in e.args[0]
 
     def test_no_request_defaults(self):
 

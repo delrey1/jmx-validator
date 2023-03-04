@@ -46,9 +46,9 @@ def test_connect_and_response_timeout_present_if_request_defaults_exist(file: El
     if requests_defaults:
         for request_default in requests_defaults:
             response_timeout = request_default.find("./stringProp[@name='HTTPSampler.response_timeout']").text
-            assert response_timeout not in ["", None]
+            assert response_timeout not in ["", None], "Did not see a response timeout set - Make sure one is set"
             connect_timeout = request_default.find("./stringProp[@name='HTTPSampler.connect_timeout']").text
-            assert connect_timeout not in ["", None]
+            assert connect_timeout not in ["", None], "Did not see a connection timeout set - Make sure one is set"
 
 
 @pytest.mark.parametrize("file", retrieve_jmx_files(), ids=retrieve_jmx_file_paths())
