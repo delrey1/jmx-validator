@@ -64,6 +64,23 @@ def test_no_invalid_filenames(file: ElementTree):
             invalid_filenames.append(invalid_filename.text)
     assert invalid_filenames == []
 
+@pytest.mark.parametrize("file", retrieve_jmx_files(), ids=retrieve_jmx_file_paths())
+def test_unix_friendly_file_paths(file: ElementTree):
+    potential_invalid_elements = file.xpath(
+        r".//stringProp[@name='filename' and (contains(text(), '\'))]")
+    invalid_filenames = []
+    if potential_invalid_elements:
+        for potential_invalid_element in potential_invalid_elements:
+
+            amended_element = str(potential_invalid_element.text).replace("\\\\", "")
+            if "\\" in amended_element:
+                LOGGER.warning("Saw invalid filename =>%s<=. Ensure paths in jmeter are relative" % (
+                    potential_invalid_element.text
+                ))
+                invalid_filenames.append(potential_invalid_element.text)
+            else:
+                LOGGER.info("Saw linux friendly file path =>%s<=" % (potential_invalid_element))
+    assert invalid_filenames == [], "There were some linux unfriendly filepaths. Make sure all backslashes are escaped (e.g. \\\\), or just use forward slashes"
 
 @pytest.mark.parametrize("file", retrieve_jmx_files(), ids=retrieve_jmx_file_paths())
 def test_fragment_module_no_exist(file: ElementTree):

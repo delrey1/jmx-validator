@@ -1,8 +1,8 @@
-import os
 import unittest
+
 from lxml import etree
 
-from app.test_jmx import test_connect_and_response_timeout_present_if_request_defaults_exist, test_no_invalid_filenames
+from app.test_jmx import test_unix_friendly_file_paths
 
 
 class MyTestCase(unittest.TestCase):
@@ -12,29 +12,20 @@ class MyTestCase(unittest.TestCase):
 
     def test_invalid_windows_filename(self):
 
-        file = etree.parse('data/InvalidWindowsFilename.jmx')
+        file = etree.parse('data/LinuxUnfriendlyFilePaths.jmx')
 
         try:
-            test_no_invalid_filenames(file)
+            test_unix_friendly_file_paths(file)
             raise Exception
-        except AssertionError:
+        except AssertionError as e:
             pass
 
-    def test_invalid_linux_filename(self):
+    def test_valid_windows_filename(self):
 
-        file = etree.parse('data/InvalidLinuxFilename.jmx')
+        file = etree.parse('data/LinuxFriendlyFilePaths.jmx')
 
-        try:
-            test_no_invalid_filenames(file)
-            raise Exception
-        except AssertionError:
-            pass
+        test_unix_friendly_file_paths(file)
 
-    def test_valid_filename(self):
-
-        file = etree.parse('data/ValidFileName.jmx')
-        # Expecting no assertion error
-        test_no_invalid_filenames(file)
 
 
 
